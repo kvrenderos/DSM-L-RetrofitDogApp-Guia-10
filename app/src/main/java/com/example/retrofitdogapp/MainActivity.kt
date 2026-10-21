@@ -1,5 +1,6 @@
 package com.example.retrofitdogapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -18,6 +19,7 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var dogAdapter: DogAdapter
     private var images: MutableList<String> = ArrayList()
+    private var request: Call<DogsResponse?>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +34,9 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
         }
         initRecyclerView()
         binding.searchDogs.setOnQueryTextListener(this)
+        binding.openGithub.setOnClickListener {
+            startActivity(Intent(this, GithubActivity::class.java))
+        }
     }
 
     private fun initRecyclerView() {
@@ -41,26 +46,34 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     private fun searchByName(raza: String) {
+        request?.cancel()
         val batch: Call<DogsResponse?>? = RetrofitClient.instance.getDogsByBreed(raza)
+        request = batch
+        images.clear()
+        dogAdapter.notifyDataSetChanged()
         batch?.enqueue(object : Callback<DogsResponse?> {
             override fun onResponse(call: Call<DogsResponse?>, response: Response<DogsResponse?>) {
-                if (response.isSuccessful && response.body() != null) {
+                if (request !== call || isDestroyed) return
+                if (response.isSuccessful && response.body()?.getStatus() == "success") {
                     val responseImages = response.body()?.getImages()?.filterNotNull() ?: emptyList()
                     images.clear()
                     images.addAll(responseImages)
                     dogAdapter.notifyDataSetChanged()
+                    if (images.isEmpty()) Toast.makeText(this@MainActivity, R.string.no_dogs, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this@MainActivity, R.string.dog_error, Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<DogsResponse?>, t: Throwable) {
-                showError()
+                if (!call.isCanceled && request === call && !isDestroyed) showError()
             }
         })
     }
 
     private fun showError() {
         Toast
-            .makeText(this, "Ocurrió un error", Toast.LENGTH_SHORT)
+            .makeText(this, R.string.network_error, Toast.LENGTH_SHORT)
             .show()
     }
 
@@ -69,9 +82,16 @@ class MainActivity : AppCompatActivity(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        if (!query.isNullOrEmpty()) {
-            searchByName(query.lowercase(Locale.getDefault()))
+        val breed = query.orEmpty().trim().lowercase(Locale.ROOT)
+        if (breed.isNotEmpty()) {
+            searchByName(breed)
+            binding.searchDogs.clearFocus()
         }
         return true
+    }
+
+    override fun onDestroy() {
+        request?.cancel()
+        super.onDestroy()
     }
 }

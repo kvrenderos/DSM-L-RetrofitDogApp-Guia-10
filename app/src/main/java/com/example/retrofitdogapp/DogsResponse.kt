@@ -18,7 +18,7 @@ private var status: String? = null
     fun getImages(): List<String?>? {
         return images
     }
-    fun setImges(images: List<String?>?) {
+    fun setImages(images: List<String?>?) {
         this.images = images
     }
 }

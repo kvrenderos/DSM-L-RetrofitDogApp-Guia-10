@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">RetrofitDogApp</string>
+    <string name="open_github">GitHub: repositorios públicos</string>
+    <string name="back_to_dogs">Volver a perros</string>
+    <string name="github_title">Repositorios de GitHub</string>
+    <string name="username_hint">Usuario de GitHub, por ejemplo octocat</string>
+    <string name="github_instructions">Escribe un usuario y pulsa Buscar en el teclado.</string>
+    <string name="invalid_username">Ingresa un usuario válido de GitHub (máximo 39 caracteres, letras, números y guiones simples).</string>
+    <string name="loading_repositories">Cargando repositorios de %1$s…</string>
+    <string name="no_repositories">%1$s no tiene repositorios públicos.</string>
+    <string name="repository_count">%1$d repositorios cargados de %2$s</string>
+    <string name="user_not_found">No se encontró el usuario.</string>
+    <string name="github_limit">GitHub limitó las solicitudes. Intenta más tarde.</string>
+    <string name="github_error">No se pudieron obtener los repositorios.</string>
+    <string name="network_error">No se pudo conectar. Revisa tu conexión e intenta de nuevo.</string>
+    <string name="load_more">Cargar más</string>
+    <string name="retry">Reintentar</string>
+    <string name="no_description">Sin descripción</string>
+    <string name="no_language">Lenguaje no especificado</string>
+    <string name="repository_details">%1$s · %2$d estrellas</string>
+    <string name="breed_hint">Raza en inglés, por ejemplo husky</string>
+    <string name="dog_image">Fotografía de un perro de la raza buscada</string>
+    <string name="dog_error">No se encontró la raza o la respuesta no es válida.</string>
+    <string name="no_dogs">No hay imágenes para esta raza.</string>
 </resources>
